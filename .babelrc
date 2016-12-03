@@ -1,0 +1,18 @@
+{
+  "presets": ["latest"],
+  "plugins": [],
+  "ignore": [
+    // any file named foo.js
+    "foo.js",
+    // any js file inside bar folder including sub-directory
+    "bar/**/*.js"
+  ],
+  "env": {
+    "pro": {
+      "plugins": []
+    },
+    "dev": {
+      "plugins": []
+    }
+  }
+}
