@@ -1,13 +1,13 @@
-var webpackDevServer = require('webpack-dev-server');
-var webpack = require('webpack');
-var config = require('./webpack.config');
-var path = require('path');
+var webpackDevServer = require("webpack-dev-server");
+var webpack = require("webpack");
+var config = require("./webpack.config");
+var path = require("path");
 
 var compiler = webpack(config);
 
 var server = new webpackDevServer(compiler,{
     //**** Start the server from specific path of project ****
-    contentBase: './dist',
+    contentBase: "./dist",
     // Hot Module Reload
     hot: true,
     //The target file using in
@@ -19,4 +19,4 @@ var server = new webpackDevServer(compiler,{
     }
 });
 
-server.listen(20987, '0.0.0.0', function() {});
+server.listen(20987, "0.0.0.0", function() {});

@@ -1,4 +1,4 @@
 module.exports = {
-    message: 'looking very good',
-    motive: 'success'
-}
+    message: "looking very good",
+    motive: "success"
+};

@@ -33,15 +33,15 @@ var caseModule = DEVELOPMENT ?
         },
         module: {
             // Preloaders is no longer in new Webpack, just use the loaders
-            //preLoaders: [] now turn to enforce: 'pre', so on postLoaders => enforce: "post"
+            //preLoaders: [] now turn to enforce: 'pre', so on postLoaders => enforce: 'post'
             loaders: [
-                {
-                    // Javascript with js ext or jsx ext
-                    enforce: 'pre',
-                    test: /\.jsx?$/,
-                    loader: ['eslint-loader'],
-                    exclude: [/node_modules/,/bower_components/]
-                },
+                // {
+                //     // Javascript with js ext or jsx ext
+                //     enforce: 'pre',
+                //     test: /\.jsx?$/,
+                //     loader: ['eslint-loader'],
+                //     exclude: [/node_modules/,/bower_components/]
+                // },
                 {
                     // Javascript with js ext or jsx ext
                     test: /\.jsx?$/,
@@ -55,14 +55,24 @@ var caseModule = DEVELOPMENT ?
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {
-                    test: /\.scss$/,
+                    test: /\.(css|scss)$/,
                     // This will cause inline style so we should go with extract-text-webpack-plugin to move them to external file
                     loader: ExtractTextPlugin.extract({
                         fallbackLoader: 'style-loader',
-                        loader: ['css-loader','sass-loader']
+                        loader: [
+                            'css-loader?sourceMap&importLoader=1',
+                            'postcss-loader',
+                            'sass-loader?sourceMap',
+                            'postcss-loader'
+                        ]
+                        // This loader order here means: firstly the scss file will be read by postcss-loader with parser and syntax postcss-scss(not compile)
+                        // so the output will be still scss content, the purpose is to allow we can write cssnext syntax into scss syntax
+                        // since sass doesnt except cssnext syntax so we have to use postcss-scss convert to normal scss file with prefixed and cssnext compiled
+                        // sass will compile it to css -> this css file havent been prefixed (dont know why) so we have to pass it to posscss-loader again
+                        // and postcss again will validate that and prefix that css file. Then complete css file will be output to cssloader
                     }),
                     exclude: [/node_modules/,/bower_components/]
-                }
+                },
             ]
         },
         plugins: [
@@ -129,7 +139,7 @@ var caseModule = DEVELOPMENT ?
                 {
                     test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2)$/,
                     //Url loader will automatically fallback to fileloader if the file is large than 10000 bytes
-                    loader: ['url-loader?limit=10000&name=[hash:32].[ext]'],
+                    loader: ['url-loader?limit=10000&name=[hash:16].[ext]'],
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {

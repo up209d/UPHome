@@ -2,6 +2,8 @@
 
 Feature:
 
+--- 01/12/2016
+
     + Webpack & Webpack Dev Server via dev-server.js (port:20987, folder: ./dist)
 
     + Enable Hot Module Reload Plugin and Uglify in Webpack for development
@@ -14,8 +16,11 @@ Feature:
 
     + HTML Generator Plugin from template (also have html-loader if needed)
 
+--- 03/12/2016
+
     + ESLint for linting ES6 coding in webpack preLoader
 
-    + ...
+    + PostCSS + Autoprefixer + CSSNext with SCSS syntax plugin installed
+
 
 Author: U.P
