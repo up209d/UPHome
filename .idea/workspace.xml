@@ -499,7 +499,7 @@
       <workItem from="1480741143218" duration="827000" />
       <workItem from="1480741984449" duration="929000" />
       <workItem from="1480742927091" duration="1528000" />
-      <workItem from="1480744763827" duration="21611000" />
+      <workItem from="1480744763827" duration="21625000" />
     </task>
     <task id="LOCAL-00001" summary="Update Readme for the first time">
       <created>1480748325202</created>
@@ -529,11 +529,18 @@
       <option name="project" value="LOCAL" />
       <updated>1480844403546</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="PostCSS +  AutoPrefixer +  CSSNext with SCSS Syntax">
+      <created>1480844442509</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1480844442509</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="80483000" />
+    <option name="totallyTimeSpent" value="80497000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
