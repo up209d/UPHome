@@ -22,5 +22,8 @@ Feature:
 
     + PostCSS + Autoprefixer + CSSNext with SCSS syntax plugin installed
 
+--- 04/12/2016
+
+    + Image Webpack Loader Image Compress added to Dev and Build
 
 Author: U.P

@@ -45,13 +45,30 @@ var caseModule = DEVELOPMENT ?
                 {
                     // Javascript with js ext or jsx ext
                     test: /\.jsx?$/,
-                    loader: ['babel-loader'],
+                    loader: 'babel-loader',
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {
                     test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2)$/,
                     //Url loader will automatically fallback to fileloader if the file is large than 10000 bytes
-                    loader: ['url-loader?limit=10000&name=[name].[ext]'],
+                    loaders: [
+                        'url-loader?limit=10000&name=[name].[ext]',
+                        {
+                            loader: 'image-webpack-loader',
+                            query: {
+                                progressive: true,
+                                optimizationLevel: 7,
+                                interlaced: false,
+                                mozjpeg: {
+                                    quality: 70
+                                },
+                                pngquant: {
+                                    quality: '60-90',
+                                    speed: 4
+                                }
+                            }
+                        }
+                    ],
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {
@@ -139,7 +156,38 @@ var caseModule = DEVELOPMENT ?
                 {
                     test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2)$/,
                     //Url loader will automatically fallback to fileloader if the file is large than 10000 bytes
-                    loader: ['url-loader?limit=10000&name=[hash:16].[ext]'],
+                    loaders: [
+                        'url-loader?limit=10000&name=[hash].[ext]',
+                        {
+                            loader: 'image-webpack-loader',
+                            query: {
+                                progressive: true,
+                                optimizationLevel: 7,
+                                interlaced: false,
+                                gifsicle: {
+                                    interlaced: false,
+                                    optimizationLevel: 3
+                                },
+                                mozjpeg: {
+                                    quality: 70
+                                },
+                                pngquant:{
+                                    quality: "65-90",
+                                    speed: 3
+                                },
+                                svgo:{
+                                    plugins: [
+                                        {
+                                            removeViewBox: false
+                                        },
+                                        {
+                                            removeEmptyAttrs: false
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {
