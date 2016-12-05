@@ -16,19 +16,27 @@ var caseModule = DEVELOPMENT ?
         // like you are having that as in vendorBundle
         externals: {
             // You have to add the CDN Linking to the Index.html manually as it is external library
-            'tweenmax' : 'TM' // Mean tweenmax is external library, being used as a global var TweenMax
+            // 'tweenmax' : 'TM' // Mean tweenmax is external library, being used as a global var TweenMax
         },
         devtool: 'source-map',
         entry: {
             // The point of entry object is out multi bundle file which is one for your app and another for other plugin vendor
             // We split cuz we want to cache the vendor one cuz there s no point to reload that and it can save a lot of bandwidth
+            // each entry name will output to one js file with chunk hash (see output)
+            // One entry can contain as many file as they are listed in
             appBundle: [
                 './src/js/app.js',
                 'webpack/hot/dev-server',
                 'webpack-dev-server/client?http://localhost:20987/'
             ],
+            //Vendor Bundle will contain any library which is node module or bower component or self define library as well
+            // as the library which is not a node module, for exp: './src/js/vendor/gsap/TweenMax.min.js'
+            // Everytime in client js when we require the library we have to declare it also here to let webpack put it in
+            // vendorBundle.js after packing.
             vendorBundle: [
-                'jquery'
+                './src/js/vendor/gsap/TweenMax.min.js',
+                'jquery',
+                'trianglify'
             ]
         },
         module: {
@@ -47,6 +55,13 @@ var caseModule = DEVELOPMENT ?
                     test: /\.jsx?$/,
                     loader: 'babel-loader',
                     exclude: [/node_modules/,/bower_components/]
+                },
+                {
+                    test: /\.json$/,
+                    loader: ['json-loader'],
+                    // Json loader has to access to the json file from node_modules or bower_component
+                    // so the exclude is useless
+                    // exclude: [/node_modules/,/bower_components/]
                 },
                 {
                     test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2)$/,
@@ -103,7 +118,7 @@ var caseModule = DEVELOPMENT ?
                 compress: false,
                 mangle: false,
                 beautify: true,
-                exclude: [/node_modules/,/bower_components/]
+                // exclude: [/node_modules/,/bower_components/]
             }),
             // In order to inject the variable to other JS files have to use DefinePlugin
             new webpack.DefinePlugin({
@@ -128,22 +143,26 @@ var caseModule = DEVELOPMENT ?
             filename: '[name].js'
         }
 
-    }   :
+    }
+
+    :
+
     // For Production build
     {
         // We can include js library here that will request remotely by script src to CDN server like jquery cdn
         // syntax will be {'jquery': 'jQuery'} and you can import or require jquery normally in other js file
         // like you are having that as in vendorBundle
         externals: {
-            'tweenmax' : 'TweenMax' // Mean tweenmax is external library, being used as a global var TweenMax
+            // 'tweenmax' : 'TweenMax' // Mean tweenmax is external library, being used as a global var TweenMax
         },
-        devtool: 'source-map',
         entry: {
             appBundle: [
                 './src/js/app.js'
             ],
             vendorBundle: [
-                'jquery'
+                './src/js/vendor/gsap/TweenMax.min.js',
+                'jquery',
+                'trianglify'
             ]
         },
         module: {
@@ -152,6 +171,13 @@ var caseModule = DEVELOPMENT ?
                     test: /\.js$/,
                     loader: ['babel-loader'],
                     exclude: [/node_modules/,/bower_components/]
+                },
+                {
+                    test: /\.json$/,
+                    loader: ['json-loader'],
+                    // Json loader has to access to the json file from node_modules or bower_component
+                    // so the exclude is useless
+                    // exclude: [/node_modules/,/bower_components/]
                 },
                 {
                     test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2)$/,
@@ -191,11 +217,15 @@ var caseModule = DEVELOPMENT ?
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {
-                    test: /\.scss$/,
+                    test: /\.(css|scss)$/,
                     // This will cause inline style so we should go with extract-text-webpack-plugin to move them to external file
                     loader: ExtractTextPlugin.extract({
                         fallbackLoader: 'style-loader',
-                        loader: ['css-loader','sass-loader']
+                        loader: [
+                            'css-loader?importLoader=1',
+                            'postcss-loader',
+                            'sass-loader',
+                            'postcss-loader']
                     }),
                     exclude: [/node_modules/,/bower_components/]
                 }
@@ -213,7 +243,7 @@ var caseModule = DEVELOPMENT ?
                 compress: true,
                 mangle: true,
                 sourceMap: false,
-                exclude: [/node_modules/,/bower_components/]
+                // exclude: [/node_modules/,/bower_components/]
             }),
             new webpack.DefinePlugin({
                 DEVELOPMENT : DEVELOPMENT,

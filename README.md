@@ -26,4 +26,10 @@ Feature:
 
     + Image Webpack Loader Image Compress added to Dev and Build
 
+--- 05/12/2016
+
+    + Add GSAP (non-node_module v.1.18 Full) + trianglify(node_module) + jquery(node_module)
+
+    + Add PixiJS v4 + Bootstrap 4 Alpha
+
 Author: U.P
