@@ -48,6 +48,7 @@ var caseModule = DEVELOPMENT ?
             vendorBundle: [
                 // Becareful all vendor file will be included in here even it is not used (reuire,import) in any js file
                 // So the size of vendorBundle will be quite large
+                'react','react-dom',
                 './src/js/vendor/gsap/TweenMax.min.js',
                 'jquery',
                 'trianglify',
@@ -69,7 +70,7 @@ var caseModule = DEVELOPMENT ?
                 {
                     // Javascript with js ext or jsx ext
                     test: /\.jsx?$/,
-                    loader: 'babel-loader',
+                    loader: ['react-hot-loader','jsx-loader','babel-loader'],
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {
@@ -199,6 +200,7 @@ var caseModule = DEVELOPMENT ?
             vendorBundle: [
                 // Becareful all vendor file will be included in here even it is not used (reuire,import) in any js file
                 // So the size of vendorBundle will be quite large
+                'react','react-dom',
                 './src/js/vendor/gsap/TweenMax.min.js',
                 'jquery',
                 'trianglify',
@@ -209,8 +211,8 @@ var caseModule = DEVELOPMENT ?
         module: {
             loaders: [
                 {
-                    test: /\.js$/,
-                    loader: ['babel-loader'],
+                    test: /\.jsx?$/,
+                    loader: ['jsx-loader','babel-loader'],
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {

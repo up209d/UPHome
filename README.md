@@ -40,4 +40,8 @@ Feature:
 
     + [DEV] Fixed SourceMap with relative background Image Url + Hot Reload working with CSS Changing
 
+--- 06/12/2016
+
+    + React + React Dom + JSX Loader
+
 Author: U.P
