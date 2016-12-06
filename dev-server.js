@@ -3,8 +3,6 @@ var webpack = require("webpack");
 var config = require("./webpack.config");
 var path = require("path");
 
-
-
 // Get Host Config Data
 var host = require("./host.config");
 

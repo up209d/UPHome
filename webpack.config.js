@@ -13,6 +13,8 @@ var host = require("./host.config");
 var hostLocalAccess = "http://" + host.hostName+":"+host.hostPort;
 var hostNetworkAccess = "http://" + host.hostLanIP+":"+host.hostPort;
 
+// console.log(hostNetworkAccess);
+
 //process.env.NODE_ENV only work on server side mean, you cannot use that in client side
 //In window the string of NODE_ENV is freak, should just use sub string
 var status = process.env.NODE_ENV ? process.env.NODE_ENV.substr(0,3) : 'pro';
@@ -173,7 +175,7 @@ var caseModule = DEVELOPMENT ?
             // For exp: if you use localhost and you access 192.168.1.12 in browser, it will not receive any image file since the domain is not correct to the publicPath (localhost)
             // Normally you will use hostLocalAccess but if you want someone in network connect to your project you should change to the hostNetworkAccess one (192.168.1...)
             // By doing that you also have to work with the domain of network ip 192.168.1... on your browser to get everything correct. Everytime when your Lan IP changed, you have to
-            // access by the new IP again
+            // access by the new IP again, that resolve by get the lan ip automatically by npm install --save-dev get-local-ip (see host.config.js to clear about it)
             publicPath: hostNetworkAccess + '/',
             filename: '[name].js'
         }
