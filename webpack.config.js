@@ -3,6 +3,16 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
 
+// Define folder node_modules bower_components local vendor js folder (src/js/vendor)
+var node_path = path.resolve(__dirname,"node_modules");
+var bower_path = path.resolve(__dirname,"bower_components");
+var vendor_path = path.join(__dirname,"src","js","vendor");
+
+// Get Host Config Data
+var host = require("./host.config");
+var hostLocalAccess = "http://" + host.hostName+":"+host.hostPort;
+var hostNetworkAccess = "http://" + host.hostLanIP+":"+host.hostPort;
+
 //process.env.NODE_ENV only work on server side mean, you cannot use that in client side
 //In window the string of NODE_ENV is freak, should just use sub string
 var status = process.env.NODE_ENV ? process.env.NODE_ENV.substr(0,3) : 'pro';
@@ -32,11 +42,15 @@ var caseModule = DEVELOPMENT ?
             //Vendor Bundle will contain any library which is node module or bower component or self define library as well
             // as the library which is not a node module, for exp: './src/js/vendor/gsap/TweenMax.min.js'
             // Everytime in client js when we require the library we have to declare it also here to let webpack put it in
-            // vendorBundle.js after packing.
+            // vendorBundle.js after packing
             vendorBundle: [
+                // Becareful all vendor file will be included in here even it is not used (reuire,import) in any js file
+                // So the size of vendorBundle will be quite large
                 './src/js/vendor/gsap/TweenMax.min.js',
                 'jquery',
-                'trianglify'
+                'trianglify',
+                // This is d3 which is resloved from bower_components in resolve section, see below
+                'd3'
             ]
         },
         module: {
@@ -64,7 +78,7 @@ var caseModule = DEVELOPMENT ?
                     // exclude: [/node_modules/,/bower_components/]
                 },
                 {
-                    test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2)$/,
+                    test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2|ico)$/,
                     //Url loader will automatically fallback to fileloader if the file is large than 10000 bytes
                     loaders: [
                         'url-loader?limit=10000&name=[name].[ext]',
@@ -87,31 +101,38 @@ var caseModule = DEVELOPMENT ?
                     exclude: [/node_modules/,/bower_components/]
                 },
                 {
+                    // Extract Text Plugin doesnt like Hot Reload so if we use it in dev. hot reload cannot do anything when a scss or css file changed
+                    // It s not nessesary to use extractTextPlugin in dev environment since we just need the style inline inject to HTML files with sourceMap, that is enough
+                    // Another problem is cssLoader with SourceMap doesn't like background Image which use relative url
+                    // This can be easily fix by defined the public Path in dev-server.js (see dev-server.js in order to understand) as an exact host name and port, for exp: 0.0.0.0:20987
+                    // Which the public path is fixed, there wont be any problem with relative URL - backgroundImage
                     test: /\.(css|scss)$/,
-                    // This will cause inline style so we should go with extract-text-webpack-plugin to move them to external file
-                    loader: ExtractTextPlugin.extract({
-                        fallbackLoader: 'style-loader',
-                        loader: [
-                            'css-loader?sourceMap&importLoader=1',
-                            'postcss-loader',
-                            'sass-loader?sourceMap',
-                            'postcss-loader'
-                        ]
-                        // This loader order here means: firstly the scss file will be read by postcss-loader with parser and syntax postcss-scss(not compile)
-                        // so the output will be still scss content, the purpose is to allow we can write cssnext syntax into scss syntax
-                        // since sass doesnt except cssnext syntax so we have to use postcss-scss convert to normal scss file with prefixed and cssnext compiled
-                        // sass will compile it to css -> this css file havent been prefixed (dont know why) so we have to pass it to posscss-loader again
-                        // and postcss again will validate that and prefix that css file. Then complete css file will be output to cssloader
-                    }),
+                    loaders: ["style-loader","css-loader?sourceMap","postcss-loader","sass-loader?sourceMap&sourceMapContents","postcss-loader"],
                     exclude: [/node_modules/,/bower_components/]
-                },
+                    // We also dont have to worry about production part because, in that part ExtractTextPlugin will be fine with output style.css and we dont need SourceMap so
+                    // there wont be problem with relative URL background image as well, we also dont need hot Reload so no difficulty
+                }
             ]
+        },
+        //Normally Webpack doesnt like Bower and it realize none of bower dependency as dependency so we have to tell Webpack
+        // about that manually, resolver is some kind of that function, not only for bower but for many thing else like non-module library like TimelineMax
+        // after doing that we can require or import those library as normal as node dependency
+        // We can also use this way to define a part of library, for exp : we only want TweenLite from GSAP
+        resolve: {
+            modules: ["bower_components","node_modules","./src/js/vendor"],
+            // Which line in the dependency should Webpack look inside package.json bower.json
+            mainFields: ["browser","module","main"],
+            // Note: bower.json doesnt work so have to use .bower.json here, i dont know why
+            descriptionFiles: [".bower.json","package.json"],
+            alias: {
+                "TimelineMax": path.join(vendor_path, "/gsap/TimelineMax.min.js"),
+                "TweenLite": path.join(node_path, "/gsap/src/minified/TweenLite.min.js"),
+                // Import all bower components ("d3" above in entry vendorBundle is import from this line)
+                "bower": bower_path
+            }
         },
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
-            new ExtractTextPlugin({
-                filename: 'style.css'
-            }),
             new webpack.optimize.UglifyJsPlugin({
                 test: /\.jsx?$/,
                 comment: true,
@@ -126,6 +147,10 @@ var caseModule = DEVELOPMENT ?
                 PRODUCTION  : !DEVELOPMENT
             }),
             new HTMLWebpackPlugin({
+                // Inject Fav Icon here, for advance use https://github.com/jantimon/favicons-webpack-plugin
+                // Otherwise it s not important to put icon file here instead of use data uri directly to HTML Template
+                // since the icon file is small so using data:URI is better way, use online converter to convert ico to data URI
+                // favicon: './src/assets/favicon.ico',
                 //filename can be a full path /filename
                 filename: 'index.html',
                 // Template just work with no HTML Loader
@@ -134,12 +159,22 @@ var caseModule = DEVELOPMENT ?
         ],
         output: {
             path: path.resolve(__dirname, 'dist'),
-            //Public path is very important for Hot Reload, if present the actual path of the output file,
+            // Public path is very important for Hot Reload, if present the actual path of the output file,
             // in this case the server start inside 'dist' folder so the output file is in the 'dist' folder
             // so publicPath should be blank '' cuz it is in the folder.
             // for other exp: if the server start from root folder './' mean we have to go to localhost:port/dist folder to
             // access the output file so the Public Path have to be /dist/
-            publicPath: '',
+
+            // Remember *** IMPORTANT *** in pulic path we have to end up with "/" like localhost:20987/ or "/dist/" as when it add to relative url
+            // it will not automatically add / to the url for exp: (images/abc.png) => localhost:20987images/abc.png
+
+            // Public Path for Server can be a Local Access (http://localhost:20987/) or Network Access (http://192.168.1.14:20987)
+            // Because if you set Absolute PublicPath you have to use that in order for browser can get all files correctly
+            // For exp: if you use localhost and you access 192.168.1.12 in browser, it will not receive any image file since the domain is not correct to the publicPath (localhost)
+            // Normally you will use hostLocalAccess but if you want someone in network connect to your project you should change to the hostNetworkAccess one (192.168.1...)
+            // By doing that you also have to work with the domain of network ip 192.168.1... on your browser to get everything correct. Everytime when your Lan IP changed, you have to
+            // access by the new IP again
+            publicPath: hostNetworkAccess + '/',
             filename: '[name].js'
         }
 
@@ -160,9 +195,13 @@ var caseModule = DEVELOPMENT ?
                 './src/js/app.js'
             ],
             vendorBundle: [
+                // Becareful all vendor file will be included in here even it is not used (reuire,import) in any js file
+                // So the size of vendorBundle will be quite large
                 './src/js/vendor/gsap/TweenMax.min.js',
                 'jquery',
-                'trianglify'
+                'trianglify',
+                // This is d3 which is resloved from bower_components in resolve section, see below
+                'd3'
             ]
         },
         module: {
@@ -180,7 +219,7 @@ var caseModule = DEVELOPMENT ?
                     // exclude: [/node_modules/,/bower_components/]
                 },
                 {
-                    test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2)$/,
+                    test: /\.(png|jpg|gif|svg|tff|eot|woff|woff2|ico)$/,
                     //Url loader will automatically fallback to fileloader if the file is large than 10000 bytes
                     loaders: [
                         'url-loader?limit=10000&name=[hash].[ext]',
@@ -231,6 +270,23 @@ var caseModule = DEVELOPMENT ?
                 }
             ]
         },
+        //Normally Webpack doesnt like Bower and it realize none of bower dependency as dependency so we have to tell Webpack
+        // about that manually, resolver is some kind of that function, not only for bower but for many thing else like non-module library like TimelineMax
+        // after doing that we can require or import those library as normal as node dependency
+        // We can also use this way to define a part of library, for exp : we only want TweenLite from GSAP
+        resolve: {
+            modules: ["bower_components","node_modules","./src/js/vendor"],
+            // Which line in the dependency should Webpack look inside package.json bower.json
+            mainFields: ["browser","module","main"],
+            // Note: bower.json doesnt work so have to use .bower.json here, i dont know why
+            descriptionFiles: [".bower.json","package.json"],
+            alias: {
+                "TimelineMax": path.join(vendor_path, "/gsap/TimelineMax.min.js"),
+                "TweenLite": path.join(node_path, "/gsap/src/minified/TweenLite.min.js"),
+                // Import all bower components ("d3" above in entry vendorBundle is import from this line)
+                "bower": bower_path
+            }
+        },
         plugins: [
             new ExtractTextPlugin({
                 // app.scss and app.js has same chunk hash that why instead of use chunk hash for the change of js
@@ -258,6 +314,10 @@ var caseModule = DEVELOPMENT ?
                 names: ['vendorBundle','manifest']
             }),
             new HTMLWebpackPlugin({
+                // Inject Fav Icon here, for advance use https://github.com/jantimon/favicons-webpack-plugin
+                // Otherwise it s not important to put icon file here instead of use data uri directly to HTML Template
+                // since the icon file is small so using data:URI is better way
+                // favicon: './src/assets/favicon.ico',
                 //filename can be a full path /filename
                 filename: 'index.html',
                 // Template just work with no HTML Loader

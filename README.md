@@ -32,4 +32,12 @@ Feature:
 
     + Add PixiJS v4 + Bootstrap 4 Alpha
 
+--- 06/12/2016
+
+    + Add Bower dependency resolving, non-module library js resolving
+
+    + Add d3.js
+
+    + [DEV] Fixed SourceMap with relative background Image Url + Hot Reload working with CSS Changing
+
 Author: U.P

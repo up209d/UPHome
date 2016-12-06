@@ -1,4 +1,5 @@
 require ("../scss/app.scss");
+
 var $ = require ("jquery");
 var trianglify = require("trianglify");
 var TweenMax = require("./vendor/gsap/TweenMax.min");

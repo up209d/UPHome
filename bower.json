@@ -1,0 +1,30 @@
+{
+  "name": "UPHome",
+  "description": "UP Homepage - Portfolio",
+  "main": "index.html",
+  "authors": [
+    "U.P"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "UP",
+    "Design",
+    "Dev",
+    "Developer",
+    "Home",
+    "Info",
+    "Portfolio"
+  ],
+  "homepage": "https://github.com/up209d/UPHome",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "d3": "^4.4.0"
+  }
+}
