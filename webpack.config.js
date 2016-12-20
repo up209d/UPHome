@@ -37,7 +37,7 @@ var caseModule = DEVELOPMENT ?
             // each entry name will output to one js file with chunk hash (see output)
             // One entry can contain as many file as they are listed in
             appBundle: [
-                './src/js/app.js',
+                './src/js/main.js',
                 'webpack/hot/dev-server',
                 'webpack-dev-server/client?'+hostNetworkAccess+'/' // 'webpack-dev-server/client?http://192.168.1.79:20987/'
                 // 'webpack-dev-server/client?http://localhost:20987/'
@@ -202,7 +202,7 @@ var caseModule = DEVELOPMENT ?
         },
         entry: {
             appBundle: [
-                './src/js/app.js'
+                './src/js/main.js'
             ],
             vendorBundle: [
                 // Becareful all vendor file will be included in here even it is not used (reuire,import) in any js file
