@@ -23,6 +23,7 @@ var DEVELOPMENT = status === 'dev';
 var caseModule = DEVELOPMENT ?
     // For Development build
     {
+        performance: { hints: false },
         // We can include js library here that will request remotely by script src to CDN server like jquery cdn
         // syntax will be {'jquery': 'jQuery'} and you can import or require jquery normally in other js file
         // like you are having that as in vendorBundle
