@@ -1,6 +1,6 @@
 # This Folder is for React Components
 
-# The Structure will be
+The Structure will be
 
 app.js // The top level of React Component
 
@@ -11,3 +11,12 @@ app.js // The top level of React Component
 --- Layout Folder for big components of layout like navigation, header, footer, etc ...
 
 --- Pages Folder for routing to different pages such as home, about, blog etc ...
+
+
+Component will be named as name.js
+
+Container will be named as name.container.js
+
+Note:
+Component is just the HTML5 structure component
+Container is a component that is used to fetch data from outside sources

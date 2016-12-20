@@ -1,0 +1,1 @@
+This file will store constants, for exp: Action Type for Redux Reduce

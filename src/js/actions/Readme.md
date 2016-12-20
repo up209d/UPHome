@@ -1,1 +1,1 @@
-# This folder is for Redux Actions
+This folder is for Redux Actions

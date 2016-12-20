@@ -143,6 +143,12 @@ var caseModule = DEVELOPMENT ?
         },
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
+            // Import Jquery or any library Globally
+            new webpack.ProvidePlugin({
+                $: "jquery",
+                jQuery: "jquery",
+                "window.jQuery": "jquery"
+            }),
             new webpack.optimize.UglifyJsPlugin({
                 test: /\.jsx?$/,
                 comment: true,
@@ -299,6 +305,12 @@ var caseModule = DEVELOPMENT ?
             }
         },
         plugins: [
+            // Import Jquery or any library Globally
+            new webpack.ProvidePlugin({
+                $: "jquery",
+                jQuery: "jquery",
+                "window.jQuery": "jquery"
+            }),
             new ExtractTextPlugin({
                 // app.scss and app.js has same chunk hash that why instead of use chunk hash for the change of js
                 // we use content hash for hash changing everytime the content inside has changed

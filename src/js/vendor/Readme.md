@@ -1,1 +1,1 @@
-# This folder will contain all js library which is not from node modules
+This folder will contain all js library which is not from node modules
