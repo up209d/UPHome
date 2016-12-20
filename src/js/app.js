@@ -1,14 +1,18 @@
 require ("../scss/app.scss");
 
-var $ = require ("jquery");
-var trianglify = require("trianglify");
-var TweenMax = require("./vendor/gsap/TweenMax.min");
+var React = require('react');
+var ReactDOM = require('react-dom');
 
-const path = require("path");
-var logs = require("./modules/logs");
+import Store from 'redux';
 
-var content = document.getElementById("app");
-content.innerHTML = `<h1>Dev: ${DEVELOPMENT} <span>Pro: ${PRODUCTION}</span></h1><p class="box">I am custom class which is ${logs.message}</p>`;
+console.log(Store);
+
+ReactDOM.render(
+    <div className="box">
+        <h1>Hello, <span>Man!</span></h1>
+    </div>,
+    document.getElementById('root')
+);
 
 if (DEVELOPMENT) {
     module.hot.accept();

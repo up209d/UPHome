@@ -1,5 +1,8 @@
 {
-  "presets": ["latest"],
+  // IMPORTANT FOR WEBSTORM !!!
+  //You can also switch language version to JReact JSX manually in Preferences | Languages & Frameworks | JavaScript.
+  //https://blog.jetbrains.com/webstorm/2015/10/working-with-reactjs-in-webstorm-coding-assistance/
+  "presets": ["latest","react"],
   "plugins": [],
   "ignore": [
     // any file named foo.js

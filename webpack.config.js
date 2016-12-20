@@ -39,7 +39,8 @@ var caseModule = DEVELOPMENT ?
             appBundle: [
                 './src/js/app.js',
                 'webpack/hot/dev-server',
-                'webpack-dev-server/client?http://localhost:20987/'
+                'webpack-dev-server/client?'+hostNetworkAccess+'/' // 'webpack-dev-server/client?http://192.168.1.79:20987/'
+                // 'webpack-dev-server/client?http://localhost:20987/'
             ],
             //Vendor Bundle will contain any library which is node module or bower component or self define library as well
             // as the library which is not a node module, for exp: './src/js/vendor/gsap/TweenMax.min.js'
@@ -49,11 +50,11 @@ var caseModule = DEVELOPMENT ?
                 // Becareful all vendor file will be included in here even it is not used (reuire,import) in any js file
                 // So the size of vendorBundle will be quite large
                 'react','react-dom',
-                './src/js/vendor/gsap/TweenMax.min.js',
-                'jquery',
-                'trianglify',
+                // './src/js/vendor/gsap/TweenMax.min.js',
+                // 'jquery',
+                // 'trianglify',
                 // This is d3 which is resloved from bower_components in resolve section, see below
-                'd3'
+                // 'd3'
             ]
         },
         module: {
@@ -91,6 +92,10 @@ var caseModule = DEVELOPMENT ?
                                 progressive: true,
                                 optimizationLevel: 7,
                                 interlaced: false,
+                                gifsicle: {
+                                    interlaced: false,
+                                    optimizationLevel: 3
+                                },
                                 mozjpeg: {
                                     quality: 70
                                 },
@@ -130,6 +135,8 @@ var caseModule = DEVELOPMENT ?
             alias: {
                 "TimelineMax": path.join(vendor_path, "/gsap/TimelineMax.min.js"),
                 "TweenLite": path.join(node_path, "/gsap/src/minified/TweenLite.min.js"),
+                "TimelineLite": path.join(vendor_path, "/gsap/TimelineLite.min.js"),
+                "TweenMax": path.join(node_path, "/gsap/src/minified/TweenMax.min.js"),
                 // Import all bower components ("d3" above in entry vendorBundle is import from this line)
                 "bower": bower_path
             }

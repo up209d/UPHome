@@ -42,6 +42,10 @@ Feature:
 
 --- 06/12/2016
 
-    + React + React Dom + JSX Loader
+    + React + React Dom + JSX Loader + Redux
+
+--- 20/12/2016
+
+    + Revision
 
 Author: U.P
